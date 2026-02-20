@@ -2,8 +2,12 @@ import { create } from 'zustand';
 
 interface MapState {
     boundary: any | null;
+    busStops: Array<{ lat: number; lng: number }>;
     setBoundary: (boundary: any) => void;
     clearBoundary: () => void;
+    addBusStop: (stop: { lat: number; lng: number }) => void;
+    removeBusStop: (index: number) => void;
+    clearBusStops: () => void;
 
     optimizationResult: any | null;
     isOptimizing: boolean;
@@ -18,8 +22,14 @@ interface MapState {
 
 export const useMapStore = create<MapState>((set) => ({
     boundary: null,
+    busStops: [],
     setBoundary: (boundary) => set({ boundary }),
     clearBoundary: () => set({ boundary: null }),
+    addBusStop: (stop) => set((state) => ({ busStops: [...state.busStops, stop] })),
+    removeBusStop: (index) => set((state) => ({
+        busStops: state.busStops.filter((_, i) => i !== index)
+    })),
+    clearBusStops: () => set({ busStops: [] }),
 
     optimizationResult: null,
     isOptimizing: false,

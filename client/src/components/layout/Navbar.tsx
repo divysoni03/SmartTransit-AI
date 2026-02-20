@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '../ui/button';
-import { Bus, Menu, X } from 'lucide-react';
+import { Bus, Menu, X, LogOut, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuthStore } from '../../store/useAuthStore';
 
 export const Navbar = () => {
     const [scrolled, setScrolled] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+    const { isAuthenticated, user, logout } = useAuthStore();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -15,6 +19,11 @@ export const Navbar = () => {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    const handleLogout = () => {
+        logout();
+        navigate('/');
+    };
 
     return (
         <header
@@ -40,10 +49,33 @@ export const Navbar = () => {
                     <a href="#solution" className="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition-colors">How it Works</a>
                     <a href="#features" className="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition-colors">Features</a>
                     <a href="#preview" className="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition-colors">Demo</a>
-                    <Link to="/history" className="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition-colors">History</Link>
+                    {isAuthenticated && <Link to="/history" className="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition-colors">History</Link>}
                     <div className="h-4 w-px bg-slate-200 dark:bg-slate-700 mx-2"></div>
-                    <Button variant="ghost" className="hidden lg:flex">Sign In</Button>
-                    <Button>Start Planning</Button>
+
+                    {isAuthenticated ? (
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-200">
+                                <User className="h-4 w-4" />
+                                <span>{user?.name || 'User'}</span>
+                            </div>
+                            <Button variant="ghost" size="sm" onClick={handleLogout} className="text-slate-600 dark:text-slate-300">
+                                <LogOut className="h-4 w-4 mr-2" />
+                                Sign Out
+                            </Button>
+                            <Link to="/optimize">
+                                <Button>Dashboard</Button>
+                            </Link>
+                        </div>
+                    ) : (
+                        <div className="flex items-center gap-4">
+                            <Link to="/login">
+                                <Button variant="ghost">Sign In</Button>
+                            </Link>
+                            <Link to="/register">
+                                <Button>Get Started</Button>
+                            </Link>
+                        </div>
+                    )}
                 </nav>
 
                 {/* Mobile Menu Toggle */}
@@ -69,10 +101,33 @@ export const Navbar = () => {
                             <a href="#solution" className="text-sm font-medium text-slate-600" onClick={() => setMobileMenuOpen(false)}>How it Works</a>
                             <a href="#features" className="text-sm font-medium text-slate-600" onClick={() => setMobileMenuOpen(false)}>Features</a>
                             <a href="#preview" className="text-sm font-medium text-slate-600" onClick={() => setMobileMenuOpen(false)}>Demo</a>
-                            <Link to="/history" className="text-sm font-medium text-slate-600" onClick={() => setMobileMenuOpen(false)}>History</Link>
+                            {isAuthenticated && <Link to="/history" className="text-sm font-medium text-slate-600" onClick={() => setMobileMenuOpen(false)}>History</Link>}
                             <hr className="border-slate-100 dark:border-slate-800" />
-                            <Button variant="outline" className="w-full justify-center">Sign In</Button>
-                            <Button className="w-full justify-center">Start Planning</Button>
+
+                            {isAuthenticated ? (
+                                <>
+                                    <div className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-200 py-2">
+                                        <User className="h-4 w-4" />
+                                        <span>{user?.name || 'User'}</span>
+                                    </div>
+                                    <Link to="/optimize" onClick={() => setMobileMenuOpen(false)}>
+                                        <Button className="w-full justify-center">Dashboard</Button>
+                                    </Link>
+                                    <Button variant="outline" className="w-full justify-center" onClick={() => { handleLogout(); setMobileMenuOpen(false); }}>
+                                        <LogOut className="h-4 w-4 mr-2" />
+                                        Sign Out
+                                    </Button>
+                                </>
+                            ) : (
+                                <>
+                                    <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
+                                        <Button variant="outline" className="w-full justify-center">Sign In</Button>
+                                    </Link>
+                                    <Link to="/register" onClick={() => setMobileMenuOpen(false)}>
+                                        <Button className="w-full justify-center">Get Started</Button>
+                                    </Link>
+                                </>
+                            )}
                         </div>
                     </motion.div>
                 )}

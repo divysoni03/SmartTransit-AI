@@ -5,6 +5,7 @@ import { optimizeService } from '../../lib/optimizeService';
 export const OptimizeForm: React.FC = () => {
     const {
         boundary,
+        busStops,
         setIsOptimizing,
         setOptimizationResult,
         setOptimizationError,
@@ -13,19 +14,20 @@ export const OptimizeForm: React.FC = () => {
     const [numBuses, setNumBuses] = useState(20);
     const [operatingHours, setOperatingHours] = useState(12);
     const [avgSpeed, setAvgSpeed] = useState(30);
-    const [depotLat, setDepotLat] = useState('');
-    const [depotLng, setDepotLng] = useState('');
+
+    const canSubmit = boundary !== null || busStops.length > 0;
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!boundary) return;
+        if (!canSubmit) return;
 
         const payload = {
-            boundary,
+            city_name: 'Custom Map Selection', // Require by current backend schema
+            boundary: boundary || undefined, // Send undefined if no boundary
+            bus_stops: busStops,
             num_buses: numBuses,
             operating_hours: operatingHours,
-            avg_speed: avgSpeed,
-            depot: depotLat && depotLng ? { lat: Number(depotLat), lng: Number(depotLng) } : null
+            avg_speed: avgSpeed
         };
 
         console.log('Sending to API:', payload);
@@ -116,35 +118,14 @@ export const OptimizeForm: React.FC = () => {
                     required
                 />
             </div>
-            <div className="pt-2 border-t">
-                <p className="text-sm font-medium mb-2">Optional Depot Location</p>
-                <div className="grid grid-cols-2 gap-2">
-                    <input
-                        type="number"
-                        step="any"
-                        placeholder="Latitude"
-                        className="w-full border rounded p-2"
-                        value={depotLat}
-                        onChange={(e) => setDepotLat(e.target.value)}
-                    />
-                    <input
-                        type="number"
-                        step="any"
-                        placeholder="Longitude"
-                        className="w-full border rounded p-2"
-                        value={depotLng}
-                        onChange={(e) => setDepotLng(e.target.value)}
-                    />
-                </div>
-            </div>
 
             <button
                 type="submit"
-                disabled={!boundary || isOptimizing}
-                className={`w-full py-2 px-4 rounded font-semibold text-white transition ${boundary && !isOptimizing ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'
+                disabled={!canSubmit || isOptimizing}
+                className={`w-full py-2 px-4 rounded font-semibold text-white transition ${canSubmit && !isOptimizing ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'
                     }`}
             >
-                {isOptimizing ? 'Optimizing...' : boundary ? 'Optimize Routes' : 'Draw Boundary First'}
+                {isOptimizing ? 'Optimizing...' : canSubmit ? `Optimize ${busStops.length} Stops` : 'Map Stops or Draw Boundary'}
             </button>
         </form>
     );

@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { MapContainer, TileLayer, FeatureGroup, GeoJSON, LayersControl } from 'react-leaflet';
+import { MapContainer, TileLayer, FeatureGroup, GeoJSON, LayersControl, useMapEvents, Marker } from 'react-leaflet';
 import { EditControl } from 'react-leaflet-draw';
 import { useMapStore } from '../../store/useStore';
 import { HeatmapLayer } from './HeatmapLayer';
@@ -15,8 +15,19 @@ L.Icon.Default.mergeOptions({
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
+// Component to handle map clicks for adding bus stops
+const MapEventsListener = () => {
+    const { addBusStop } = useMapStore();
+    useMapEvents({
+        click(e) {
+            addBusStop({ lat: e.latlng.lat, lng: e.latlng.lng });
+        }
+    });
+    return null;
+};
+
 export const OptimizeMap: React.FC = () => {
-    const { boundary, setBoundary, clearBoundary, optimizationResult } = useMapStore();
+    const { boundary, setBoundary, clearBoundary, optimizationResult, busStops, clearBusStops } = useMapStore();
     const featureGroupRef = useRef<L.FeatureGroup>(null);
 
     const onCreated = (e: any) => {
@@ -51,10 +62,13 @@ export const OptimizeMap: React.FC = () => {
                     zoom={5}
                     style={{ height: '100%', width: '100%', minHeight: '400px', borderRadius: '0.5rem', zIndex: 0 }}
                 >
+                    <MapEventsListener />
+
                     <TileLayer
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                         attribution="&copy; OpenStreetMap contributors"
                     />
+
                     <FeatureGroup ref={featureGroupRef}>
                         <EditControl
                             position="topright"
@@ -80,9 +94,14 @@ export const OptimizeMap: React.FC = () => {
                         />
                     </FeatureGroup>
 
+                    {/* Render clicked Bus Stops natively on the map */}
+                    {busStops.map((stop, index) => (
+                        <Marker key={`bus-stop-${index}`} position={[stop.lat, stop.lng]} />
+                    ))}
+
                     {optimizationResult && (
                         <LayersControl position="topright">
-                            <LayersControl.Overlay checked name="Bus Stops">
+                            <LayersControl.Overlay checked name="Optimized Stops">
                                 <FeatureGroup>
                                     {optimizationResult.stops && <GeoJSON data={optimizationResult.stops} />}
                                 </FeatureGroup>
@@ -110,20 +129,42 @@ export const OptimizeMap: React.FC = () => {
                     )}
                 </MapContainer>
             </div>
-            {boundary && (
-                <div className="absolute bottom-4 left-4 z-[400] bg-white p-3 rounded shadow-md">
-                    <p className="text-sm font-semibold text-green-600 mb-2">Boundary Selected!</p>
-                    <button
-                        onClick={() => {
-                            clearBoundary();
-                            if (featureGroupRef.current) {
-                                featureGroupRef.current.clearLayers();
-                            }
-                        }}
-                        className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm transition"
-                    >
-                        Reset Boundary
-                    </button>
+
+            {/* UI overlay to manage selected boundary and bus stops */}
+            {(boundary || busStops.length > 0) && (
+                <div className="absolute bottom-4 left-4 z-[400] bg-white p-4 rounded shadow-md border border-slate-200">
+                    <h3 className="text-sm font-bold text-slate-800 mb-3 border-b pb-2">Map Selection</h3>
+
+                    <div className="space-y-3">
+                        {boundary && (
+                            <div className="flex items-center justify-between gap-4">
+                                <p className="text-sm font-medium text-green-600">Polygon Active</p>
+                                <button
+                                    onClick={() => {
+                                        clearBoundary();
+                                        if (featureGroupRef.current) {
+                                            featureGroupRef.current.clearLayers();
+                                        }
+                                    }}
+                                    className="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-2 py-1 rounded text-xs font-semibold transition"
+                                >
+                                    Clear Boundary
+                                </button>
+                            </div>
+                        )}
+
+                        {busStops.length > 0 && (
+                            <div className="flex items-center justify-between gap-4">
+                                <p className="text-sm font-medium text-blue-600">{busStops.length} Stops Chosen</p>
+                                <button
+                                    onClick={() => clearBusStops()}
+                                    className="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-2 py-1 rounded text-xs font-semibold transition"
+                                >
+                                    Clear Stops
+                                </button>
+                            </div>
+                        )}
+                    </div>
                 </div>
             )}
         </div>

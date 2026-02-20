@@ -6,9 +6,22 @@ const ML_SERVICE_URL = process.env.ML_SERVICE_URL || 'http://localhost:8000';
 
 exports.startOptimization = async (req, res, next) => {
     try {
-        const { city_name, boundary_geojson, num_buses, operating_hours, avg_speed } = req.body;
+        const { city_name, boundary, bus_stops, num_buses, operating_hours, avg_speed_kmph, parameters } = req.body;
         // User is attached by auth middleware
         const userId = req.user ? req.user._id : '000000000000000000000000';
+
+        let boundary_geojson = { type: 'Point', coordinates: [0, 0] };
+        let boundaryPoints = [];
+
+        if (boundary && boundary.length >= 3) {
+            boundaryPoints = boundary;
+            const coords = boundary.map(p => [p.lng, p.lat]);
+            // 2dsphere index requires first and last point to be identical
+            if (coords[0][0] !== coords[coords.length - 1][0] || coords[0][1] !== coords[coords.length - 1][1]) {
+                coords.push(coords[0]);
+            }
+            boundary_geojson = { type: 'Polygon', coordinates: [coords] };
+        }
 
         // 2. Create/Find project & create scenario (status = processing)
         let project = await Project.findOne({ city_name, created_by: userId });
@@ -20,15 +33,9 @@ exports.startOptimization = async (req, res, next) => {
             project_id: project._id,
             num_buses,
             operating_hours,
-            avg_speed,
+            avg_speed: avg_speed_kmph, // Keep column for avg_speed if schema defines it so
             status: 'processing'
         });
-
-        // Convert the polygon coordinates for the ML service placeholder requirement
-        let boundaryPoints = [];
-        if (boundary_geojson.type === 'Polygon' && boundary_geojson.coordinates && boundary_geojson.coordinates[0]) {
-            boundaryPoints = boundary_geojson.coordinates[0].map(coord => ({ lng: coord[0], lat: coord[1] }));
-        }
 
         // 3. Call ML service
         let mlResponse;
@@ -36,9 +43,14 @@ exports.startOptimization = async (req, res, next) => {
             mlResponse = await axios.post(`${ML_SERVICE_URL}/optimize`, {
                 city_name,
                 boundary: boundaryPoints,
-                parameters: { num_buses, operating_hours, avg_speed, scenario_id: scenario._id }
+                bus_stops: bus_stops || [],
+                num_buses,
+                operating_hours,
+                avg_speed_kmph,
+                parameters: parameters || { scenario_id: scenario._id }
             });
         } catch (mlErr) {
+            console.error(mlErr.response?.data || mlErr.message);
             throw new ApiError(500, 'ML Service failed to process request');
         }
 

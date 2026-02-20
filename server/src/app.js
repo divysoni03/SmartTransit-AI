@@ -3,6 +3,9 @@ const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
 const optimizeRoutes = require('./routes/optimize.routes');
+const projectRoutes = require('./routes/project.routes');
+const scenarioRoutes = require('./routes/scenario.routes');
+const reportRoutes = require('./routes/report.routes');
 const { errorConverter, errorHandler } = require('./middleware/error.middleware');
 const requestLogger = require('./middleware/requestLogger.middleware');
 const { ApiError } = require('./utils/apiResponse');
@@ -34,6 +37,9 @@ app.use(requestLogger);
 // Routes
 app.use('/api/auth', require('./routes/auth.routes'));
 app.use('/api/optimize', optimizeRoutes);
+app.use('/api/projects', projectRoutes);
+app.use('/api/scenarios', scenarioRoutes);
+app.use('/api/reports', reportRoutes);
 
 // Swagger Documentation Route
 app.use('/api-docs', swaggerUi.serve);

@@ -35,42 +35,8 @@ export const OptimizeForm: React.FC = () => {
             setOptimizationError(null);
 
             // Try contacting the real backend, or fallback to mock
-            let result;
-            try {
-                result = await optimizeService.runOptimization(payload);
-            } catch (err) {
-                console.warn("Backend unavailable, using mock response for frontend development");
-                await new Promise(res => setTimeout(res, 2000));
-                result = {
-                    stops: {
-                        type: "FeatureCollection",
-                        features: [
-                            { type: "Feature", geometry: { type: "Point", coordinates: [78.9629, 20.5937] }, properties: { id: 1 } },
-                            { type: "Feature", geometry: { type: "Point", coordinates: [79.0, 21.0] }, properties: { id: 2 } }
-                        ]
-                    },
-                    routes: {
-                        type: "FeatureCollection",
-                        features: [
-                            { type: "Feature", geometry: { type: "LineString", coordinates: [[78.9629, 20.5937], [79.0, 21.0]] }, properties: { color: "#3b82f6" } }
-                        ]
-                    },
-                    coverage: [
-                        [20.5937, 78.9629, 0.8],
-                        [20.6, 78.95, 0.5],
-                        [20.58, 78.98, 0.9],
-                        [21.0, 79.0, 0.7],
-                        [20.95, 78.95, 0.4]
-                    ],
-                    metrics: {
-                        total_km: 120,
-                        avg_wait_time: 15,
-                        utilization_rate: 85,
-                        coverage_percent: 78
-                    }
-                };
-            }
-
+            // Pass directly without swallowing the error into a mock
+            const result = await optimizeService.runOptimization(payload);
             setOptimizationResult(result);
             console.log("Optimization complete:", result);
         } catch (error: any) {

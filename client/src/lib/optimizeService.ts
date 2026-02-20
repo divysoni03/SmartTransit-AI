@@ -11,11 +11,15 @@ export interface OptimizationPayload {
 export const optimizeService = {
     async runOptimization(payload: OptimizationPayload) {
         try {
-            // NOTE: In a real scenario, this connects to the backend API.
-            // Since this is a frontend sprint mock, if the backend is not available,
-            // we can simulate a response after a delay.
-            const response = await api.post('/api/optimize', payload);
-            return response.data;
+            const apiPayload = {
+                city_name: 'Custom Project', // Hardcoded for now
+                boundary_geojson: payload.boundary,
+                num_buses: payload.num_buses,
+                operating_hours: payload.operating_hours,
+                avg_speed: payload.avg_speed
+            };
+            const response = await api.post('/api/optimize/start', apiPayload);
+            return response.data.result;
         } catch (error) {
             console.error("Optimize error:", error);
             throw error;

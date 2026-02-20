@@ -1,18 +1,39 @@
-require('dotenv').config();
 const app = require('./src/app');
-const mongoose = require('mongoose');
+const config = require('./src/config/env');
+const logger = require('./src/config/logger');
+const connectDB = require('./src/config/db');
 
-const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/smart-transit';
+let server;
 
 // Connect to MongoDB
-mongoose.connect(MONGO_URI)
-    .then(() => {
-        console.log('Connected to MongoDB');
-        app.listen(PORT, () => {
-            console.log(`Server running on port ${PORT}`);
-        });
-    })
-    .catch((err) => {
-        console.error('MongoDB connection error:', err);
+connectDB().then(() => {
+    server = app.listen(config.port, () => {
+        logger.info(`Listening to port ${config.port}`);
     });
+});
+
+const exitHandler = () => {
+    if (server) {
+        server.close(() => {
+            logger.info('Server closed');
+            process.exit(1);
+        });
+    } else {
+        process.exit(1);
+    }
+};
+
+const unexpectedErrorHandler = (error) => {
+    logger.error(error);
+    exitHandler();
+};
+
+process.on('uncaughtException', unexpectedErrorHandler);
+process.on('unhandledRejection', unexpectedErrorHandler);
+
+process.on('SIGTERM', () => {
+    logger.info('SIGTERM received');
+    if (server) {
+        server.close();
+    }
+});

@@ -1,0 +1,112 @@
+smart-transit-ai/
+│
+├── client/                                  # React Frontend
+│   ├── public/
+│   │
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── store/
+│   │   │   ├── hooks/
+│   │   │   └── config/
+│   │   │
+│   │   ├── components/
+│   │   │   ├── map/
+│   │   │   │   ├── MapContainer.tsx
+│   │   │   │   ├── CitySelector.tsx
+│   │   │   │   ├── BoundaryDrawer.tsx
+│   │   │   │   ├── RouteLayer.tsx
+│   │   │   │   ├── StopLayer.tsx
+│   │   │   │   └── HeatmapLayer.tsx
+│   │   │   │
+│   │   │   ├── dashboard/
+│   │   │   ├── forms/
+│   │   │   └── common/
+│   │   │
+│   │   ├── pages/
+│   │   │   ├── Home.tsx
+│   │   │   ├── Optimize.tsx
+│   │   │   ├── Results.tsx
+│   │   │   └── Admin.tsx
+│   │   │
+│   │   ├── services/
+│   │   │   ├── api.ts
+│   │   │   └── optimizeService.ts
+│   │   │
+│   │   ├── utils/
+│   │   │   ├── geoUtils.ts
+│   │   │   └── coordinateExtractor.ts
+│   │   │
+│   │   ├── types/
+│   │   └── styles/
+│   │
+│   └── package.json
+│
+│
+├── server/                                  # Node Backend
+│   ├── src/
+│   │   ├── controllers/
+│   │   │   └── optimize.controller.js
+│   │   │
+│   │   ├── services/
+│   │   │   └── mlProxy.service.js
+│   │   │
+│   │   ├── validators/
+│   │   │   └── geojson.validator.js
+│   │   │
+│   │   ├── models/
+│   │   │   ├── project.model.js
+│   │   │   └── result.model.js
+│   │   │
+│   │   ├── routes/
+│   │   │   └── optimize.routes.js
+│   │   │
+│   │   ├── middleware/
+│   │   │   ├── auth.middleware.js
+│   │   │   └── error.middleware.js
+│   │   │
+│   │   └── app.js
+│   │
+│   └── server.js
+│
+│
+├── ml-service/                              # Python AI Engine
+│   ├── app/
+│   │   ├── main.py                          # FastAPI entry
+│   │   │
+│   │   ├── schemas/
+│   │   │   ├── request_schema.py
+│   │   │   └── response_schema.py
+│   │   │
+│   │   ├── preprocessing/
+│   │   │   ├── polygon_processor.py         # Handle boundary coords
+│   │   │   ├── grid_generator.py            # Create demand grid
+│   │   │   └── demand_estimator.py
+│   │   │
+│   │   ├── clustering/
+│   │   │   └── stop_generator.py
+│   │   │
+│   │   ├── routing/
+│   │   │   ├── osm_network_loader.py
+│   │   │   ├── graph_builder.py
+│   │   │   ├── shortest_path_engine.py
+│   │   │   └── route_constructor.py
+│   │   │
+│   │   ├── optimization/
+│   │   │   └── bus_allocator.py
+│   │   │
+│   │   ├── analytics/
+│   │   │   ├── coverage_analyzer.py
+│   │   │   └── metrics_generator.py
+│   │   │
+│   │   └── utils/
+│   │
+│   ├── requirements.txt
+│   └── Dockerfile
+│
+│
+├── infrastructure/
+│   ├── docker-compose.yml
+│   ├── nginx/
+│   └── ci-cd/
+│
+└── README.md

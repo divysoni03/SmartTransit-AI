@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '../ui/button';
 import { Bus, Menu, X, LogOut, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAuthStore } from '../../store/useStore';
+import { useAuthStore } from '../../store/useAuthStore';
 
 export const Navbar = () => {
     const [scrolled, setScrolled] = useState(false);
@@ -48,9 +48,9 @@ export const Navbar = () => {
                     <a href="#solution" className="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition-colors">How it Works</a>
                     <a href="#features" className="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition-colors">Features</a>
                     <a href="#preview" className="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition-colors">Demo</a>
-                    <Link to="/history" className="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition-colors">History</Link>
+                    {isAuthenticated && <Link to="/history" className="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition-colors">History</Link>}
                     <div className="h-4 w-px bg-slate-200 dark:bg-slate-700 mx-2"></div>
-                    
+
                     {isAuthenticated ? (
                         <div className="flex items-center gap-4">
                             <div className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 pl-2 pr-3 py-1.5 rounded-full">
@@ -68,7 +68,7 @@ export const Navbar = () => {
                             <Button variant="ghost" className="hidden lg:flex">Sign In</Button>
                         </Link>
                     )}
-                    
+
                     <Link to="/optimize">
                         <Button>Start Planning</Button>
                     </Link>
@@ -97,8 +97,9 @@ export const Navbar = () => {
                             <a href="#solution" className="text-sm font-medium text-slate-600" onClick={() => setMobileMenuOpen(false)}>How it Works</a>
                             <a href="#features" className="text-sm font-medium text-slate-600" onClick={() => setMobileMenuOpen(false)}>Features</a>
                             <a href="#preview" className="text-sm font-medium text-slate-600" onClick={() => setMobileMenuOpen(false)}>Demo</a>
-                            <Link to="/history" className="text-sm font-medium text-slate-600" onClick={() => setMobileMenuOpen(false)}>History</Link>
+                            {isAuthenticated && <Link to="/history" className="text-sm font-medium text-slate-600" onClick={() => setMobileMenuOpen(false)}>History</Link>}
                             <hr className="border-slate-100 dark:border-slate-800" />
+
                             {isAuthenticated ? (
                                 <>
                                     <div className="flex items-center gap-2 py-2 px-4 bg-slate-50 dark:bg-slate-800 rounded-lg">

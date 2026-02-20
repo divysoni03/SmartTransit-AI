@@ -2,12 +2,20 @@ import api from './api';
 
 export interface OptimizationPayload {
     city_name: string;
-    boundary: any;
+    boundary?: Array<{ lat: number; lng: number }>;
     bus_stops?: Array<{ lat: number; lng: number }>;
     num_buses: number;
     operating_hours: number;
-    avg_speed: number;
-    depot?: { lat: number; lng: number } | null;
+    avg_speed_kmph: number;
+    parameters: {
+        population_density: string;
+        peak_hours: string[];
+        commercial_weight: number;
+        residential_weight: number;
+        school_weight: number;
+        min_stop_distance_m: number;
+        max_walk_distance_m: number;
+    };
 }
 
 export const optimizeService = {

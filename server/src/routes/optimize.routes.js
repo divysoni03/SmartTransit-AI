@@ -15,7 +15,7 @@ const validateStartOptimization = (req, res, next) => {
 };
 
 // POST /api/optimize/start
-router.post('/start', auth(), validateStartOptimization, geojsonValidation, optimizeController.startOptimization);
+router.post('/start', auth(), validateStartOptimization, optimizeController.startOptimization);
 
 // GET /api/optimize/:id
 router.get('/:id', auth(), optimizeController.getOptimizationResult);

@@ -1,4 +1,5 @@
-import React from 'react';
+
+import { Link } from 'react-router-dom';
 import { Button } from '../ui/button';
 import { Play, ArrowRight, Activity, Map } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -35,9 +36,11 @@ export const HeroSection = () => {
                             </p>
 
                             <div className="flex flex-col sm:flex-row gap-4">
-                                <Button size="lg" className="gap-2 text-lg">
-                                    Start Planning <ArrowRight className="h-5 w-5" />
-                                </Button>
+                                <Link to="/optimize">
+                                    <Button size="lg" className="gap-2 text-lg">
+                                        Start Planning <ArrowRight className="h-5 w-5" />
+                                    </Button>
+                                </Link>
                                 <Button size="lg" variant="outline" className="gap-2 text-lg bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm">
                                     View Demo <Play className="h-5 w-5" />
                                 </Button>

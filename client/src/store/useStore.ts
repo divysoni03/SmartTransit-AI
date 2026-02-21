@@ -32,6 +32,7 @@ interface MapState {
 
     scenarios: any[];
     saveScenario: (scenario: any) => void;
+    deleteScenario: (id: number) => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -57,13 +58,29 @@ export const useMapStore = create<MapState>((set) => ({
     })),
     clearBusStops: () => set({ busStops: [] }),
 
-    optimizationResult: null,
+    optimizationResult: (() => {
+        try { return JSON.parse(localStorage.getItem('optimizationResult') || 'null'); } catch { return null; }
+    })(),
     isOptimizing: false,
     optimizationError: null,
-    setOptimizationResult: (result) => set({ optimizationResult: result }),
+    setOptimizationResult: (result) => {
+        try { localStorage.setItem('optimizationResult', JSON.stringify(result)); } catch { }
+        set({ optimizationResult: result });
+    },
     setIsOptimizing: (loading) => set({ isOptimizing: loading }),
     setOptimizationError: (error) => set({ optimizationError: error }),
 
-    scenarios: [],
-    saveScenario: (scenario) => set((state) => ({ scenarios: [...state.scenarios, scenario] }))
+    scenarios: (() => {
+        try { return JSON.parse(localStorage.getItem('scenarios') || '[]'); } catch { return []; }
+    })(),
+    saveScenario: (scenario) => set((state) => {
+        const updated = [...state.scenarios, scenario];
+        try { localStorage.setItem('scenarios', JSON.stringify(updated)); } catch { }
+        return { scenarios: updated };
+    }),
+    deleteScenario: (id: number) => set((state) => {
+        const updated = state.scenarios.filter((s: any) => s.id !== id);
+        try { localStorage.setItem('scenarios', JSON.stringify(updated)); } catch { }
+        return { scenarios: updated };
+    })
 }));

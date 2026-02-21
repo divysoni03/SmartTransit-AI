@@ -1,9 +1,8 @@
-import api from './api';
+import axios from 'axios';
 
 export interface OptimizationPayload {
     city_name: string;
     boundary?: Array<{ lat: number; lng: number }>;
-    bus_stops?: Array<{ lat: number; lng: number }>;
     num_buses: number;
     operating_hours: number;
     avg_speed_kmph: number;
@@ -21,10 +20,11 @@ export interface OptimizationPayload {
 export const optimizeService = {
     async runOptimization(payload: OptimizationPayload) {
         try {
-            // NOTE: In a real scenario, this connects to the backend API.
-            // Since this is a frontend sprint mock, if the backend is not available,
-            // we can simulate a response after a delay.
-            const response = await api.post('/api/optimize/start', payload);
+            const response = await axios.post('http://localhost:5001/optimize', payload, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
             return response.data;
         } catch (error) {
             console.error("Optimize error:", error);

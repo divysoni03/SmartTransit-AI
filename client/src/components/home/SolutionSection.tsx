@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Upload, Settings, Cpu, LineChart } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { AnimatedSection } from '../animations/AnimatedSection';

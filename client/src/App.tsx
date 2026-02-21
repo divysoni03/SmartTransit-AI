@@ -1,20 +1,11 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { useAuthStore } from './store/useStore';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
 import Optimize from './pages/Optimize';
 import Results from './pages/Results';
 import History from './pages/History';
 import Login from './pages/Login';
 import Register from './pages/Register';
-
-// Optional: Protected route wrapper
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated } = useAuthStore();
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-  return children;
-};
 
 function App() {
   return (

@@ -21,8 +21,8 @@ interface AuthState {
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
-    user: null,
-    isAuthenticated: false,
+    user: JSON.parse(localStorage.getItem('user') || 'null'),
+    isAuthenticated: !!localStorage.getItem('access_token'),
     isLoading: true, // initial state as checking
     error: null,
 
@@ -34,6 +34,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
             localStorage.setItem('access_token', tokens.access.token);
             localStorage.setItem('refresh_token', tokens.refresh.token);
+            localStorage.setItem('user', JSON.stringify(user));
 
             set({ user, isAuthenticated: true, isLoading: false });
         } catch (error: any) {
@@ -53,6 +54,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
             localStorage.setItem('access_token', tokens.access.token);
             localStorage.setItem('refresh_token', tokens.refresh.token);
+            localStorage.setItem('user', JSON.stringify(user));
 
             set({ user, isAuthenticated: true, isLoading: false });
         } catch (error: any) {
@@ -67,6 +69,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     logout: () => {
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
+        localStorage.removeItem('user');
         set({ user: null, isAuthenticated: false, error: null });
     },
 
@@ -79,10 +82,12 @@ export const useAuthStore = create<AuthState>((set) => ({
             }
 
             const response = await api.get('/api/auth/me');
+            localStorage.setItem('user', JSON.stringify(response.data.data.user));
             set({ user: response.data.data.user, isAuthenticated: true, isLoading: false });
         } catch (error) {
             localStorage.removeItem('access_token');
             localStorage.removeItem('refresh_token');
+            localStorage.removeItem('user');
             set({ user: null, isAuthenticated: false, isLoading: false });
         }
     }

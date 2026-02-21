@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { AnimatedSection } from '../animations/AnimatedSection';
 import { Card, CardContent } from '../ui/card';
 import { Button } from '../ui/button';

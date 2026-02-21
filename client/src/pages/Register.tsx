@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuthStore } from '../store/useStore';
-import api from '../lib/api';
+import { useAuthStore } from '../store/useAuthStore';
 import { Navbar } from '../components/layout/Navbar';
 import { Button } from '../components/ui/button';
 
@@ -11,9 +10,9 @@ export default function Register() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    
+
     const navigate = useNavigate();
-    const { setUser } = useAuthStore();
+    const { register } = useAuthStore();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -21,17 +20,10 @@ export default function Register() {
         setIsLoading(true);
 
         try {
-            const response = await api.post('/api/auth/register', { name, email, password });
-            const { tokens, user } = response.data.data;
-            
-            localStorage.setItem('access_token', tokens.access.token);
-            localStorage.setItem('refresh_token', tokens.refresh.token);
-            localStorage.setItem('user', JSON.stringify(user));
-            
-            setUser(user);
-            navigate('/optimize');
+            await register({ name, email, password });
+            navigate('/');
         } catch (err: any) {
-            setError(err.response?.data?.message || 'Failed to register. Email may already be in use.');
+            setError(err.response?.data?.message || err.message || 'Failed to register. Email may already be in use.');
         } finally {
             setIsLoading(false);
         }
@@ -40,7 +32,7 @@ export default function Register() {
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-slate-900 border-none">
             <Navbar />
-            
+
             <div className="pt-32 pb-16 flex justify-center items-center px-4">
                 <div className="max-w-md w-full bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 p-8">
                     <div className="text-center mb-8">

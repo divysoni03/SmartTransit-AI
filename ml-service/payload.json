@@ -1,16 +1,31 @@
 {
-  "city_name": "Ahmedabad_Central",
+  "city_name": "Mumbai_South",
   "boundary": [
-    { "lat": 23.0395, "lng": 72.5610 },
-    { "lat": 23.0395, "lng": 72.5855 },
-    { "lat": 23.0200, "lng": 72.5855 },
-    { "lat": 23.0200, "lng": 72.5610 }
+    {
+      "lat": 18.9220,
+      "lng": 72.8347
+    },
+    {
+      "lat": 18.9220,
+      "lng": 72.8250
+    },
+    {
+      "lat": 19.0176,
+      "lng": 72.8250
+    },
+    {
+      "lat": 19.0176,
+      "lng": 72.8347
+    }
   ],
   "num_buses": 25,
   "operating_hours": 16,
   "avg_speed_kmph": 22.0,
   "parameters": {
-    "peak_hours": ["08:00-11:00", "17:00-21:00"],
+    "peak_hours": [
+      "08:00-11:00",
+      "17:00-21:00"
+    ],
     "population_density": "high",
     "commercial_area_weight": 1.4,
     "residential_area_weight": 1.0,

@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Clock, MapPinOff, TrendingDown } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/card';
 import { AnimatedSection } from '../animations/AnimatedSection';

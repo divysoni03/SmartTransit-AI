@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { AnimatedSection } from '../animations/AnimatedSection';
 
 export const VisionSection = () => {

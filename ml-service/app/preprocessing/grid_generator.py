@@ -1,10 +1,13 @@
 import random
 
 def generate_grid(boundary, samples=400):
-    lat_max = boundary[0]["lat"]
-    lng_min = boundary[0]["lng"]
-    lat_min = boundary[2]["lat"]
-    lng_max = boundary[2]["lng"]
+    if not boundary:
+        return []
+
+    lat_max = max(p["lat"] for p in boundary)
+    lat_min = min(p["lat"] for p in boundary)
+    lng_max = max(p["lng"] for p in boundary)
+    lng_min = min(p["lng"] for p in boundary)
 
     points = []
     for _ in range(samples):

@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { AnimatedSection } from '../animations/AnimatedSection';
 import { Button } from '../ui/button';
 import { ArrowRight, ChevronRight } from 'lucide-react';
